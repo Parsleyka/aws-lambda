@@ -4,16 +4,23 @@ exports.handler = async (event) => {
   const http = event.requestContext.http;
 
   const res = {
+    headers: { "Content-Type": "application/json" },
     statusCode: 200,
-    message: "Hello from Lambda"
+    body: JSON.stringify(
+      {
+      statusCode: 200,
+      message: "Hello from Lambda"
+      }
+    )
   };
 
-  if (http.path === "/hello" && http.method === "GET") {
-    res.statusCode = 200;
-    res.message = "Hello from Lambda";
-  } else {
+  if (http.path !== "/hello" || http.method !== "GET") {
     res.statusCode = 400;
-    res.message = `Bad request syntax or unsupported method. Request path: ${http.path}. HTTP method: ${http.method}`;
+    res.body = JSON.stringify(
+      {
+        statusCode: 400,
+        message: `Bad request syntax or unsupported method. Request path: ${http.path}. HTTP method: ${http.method}`
+      });
   }
 
   console.log(res);
