@@ -1,8 +1,18 @@
 exports.handler = async (event) => {
-    console.log("Received event:", JSON.stringify(event));
+    console.log("Request:", JSON.stringify(event));
 
-    return {
+    const res = {
+        headers: { "Content-Type": "application/json" },
         statusCode: 200,
-        body: JSON.stringify('Hello from Lambda!'),
+        body: JSON.stringify(
+          {
+              statusCode: 200,
+              message: "Hello from Lambda"
+          }
+        )
     };
+
+    console.log("Response", JSON.stringify(res));
+
+    return res;
 };
