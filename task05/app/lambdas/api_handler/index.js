@@ -9,6 +9,11 @@ exports.handler = async (event) => {
 
     const requestContext = event.requestContext;
 
+    const lambdaNameGeneral = 'api_handler'
+    const lambdaName = process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+    const sessionTableName = lambdaName.replace(lambdaNameGeneral, tableName);
+
     try {
         if(requestContext.resourcePath === '/events'){
             switch (requestContext.httpMethod) {
@@ -18,11 +23,11 @@ exports.handler = async (event) => {
                     console.log('POST Body: ' + JSON.stringify(body));
 
                     const params = {
-                        TableName: tableName,
+                        TableName: sessionTableName,
                         Item: body
                     }
 
-                    console.log('Event: ' + JSON.stringify(params));
+                    console.log('Params: ' + JSON.stringify(params));
 
                     const res = await dynamoDb.put(params).promise();
 
