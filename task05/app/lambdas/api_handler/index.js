@@ -35,13 +35,11 @@ exports.handler = async (event) => {
 
                     console.log('dynamoDb params: ' + JSON.stringify(params));
 
-                    const res = await dynamoDb.put(params).promise();
-
-                    console.log('/events POST response body: ' + JSON.stringify(res));
+                    await dynamoDb.put(params).promise();
 
                     return {
                         statusCode: 201,
-                        body: JSON.stringify(res),
+                        body: JSON.stringify(params.Item),
                     };
                 default:
                     return {
