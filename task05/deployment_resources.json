@@ -50,7 +50,7 @@
   },
   "Events": {
     "resource_type": "dynamodb_table",
-    "hash_key_name": "cmtr-72e50b99-hash",
+    "hash_key_name": "id",
     "hash_key_type": "S",
     "read_capacity": 1,
     "write_capacity": 1,
