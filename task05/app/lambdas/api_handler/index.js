@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const uuid = require('uuid');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 const tableName = 'Events';
@@ -14,6 +15,8 @@ exports.handler = async (event) => {
 
     const sessionTableName = lambdaName.replace(lambdaNameGeneral, tableName);
 
+    console.log('Test If Table Name: ' +  process.env.DYNAMODB_TABLE_NAME)
+
     try {
         if(requestContext.resourcePath === '/events'){
             switch (requestContext.httpMethod) {
@@ -24,7 +27,7 @@ exports.handler = async (event) => {
 
                     const params = {
                         TableName: sessionTableName,
-                        Item: body
+                        Item: Object.assign({id: uuid.v4()}, body)
                     }
 
                     console.log('Params: ' + JSON.stringify(params));
