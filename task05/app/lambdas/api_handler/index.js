@@ -5,7 +5,7 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const tableName = 'Events';
 
 exports.handler = async (event) => {
-    console.log('VARIABLES: ' + JSON.stringify(process.env));
+    console.log('Variables: ' + JSON.stringify(process.env));
     console.log('Event: ' + JSON.stringify(event));
 
     const requestContext = event.requestContext;
@@ -15,24 +15,29 @@ exports.handler = async (event) => {
 
     const sessionTableName = lambdaName.replace(lambdaNameGeneral, tableName);
 
-    console.log('Test If Table Name: ' +  process.env.DYNAMODB_TABLE_NAME)
-
     try {
         if(requestContext.resourcePath === '/events'){
             switch (requestContext.httpMethod) {
                 case 'POST':
                     const body = JSON.parse(event.body);
 
-                    console.log('POST Body: ' + JSON.stringify(body));
+                    console.log('/events POST body: ' + JSON.stringify(body));
 
                     const params = {
                         TableName: sessionTableName,
-                        Item: Object.assign({id: uuid.v4()}, body)
+                        Item: {
+                            id: uuid.v4(),
+                            principalId: body.principalId,
+                            createdAt: new Date().toISOString(),
+                            body: body.content
+                        }
                     }
 
-                    console.log('Params: ' + JSON.stringify(params));
+                    console.log('dynamoDb params: ' + JSON.stringify(params));
 
                     const res = await dynamoDb.put(params).promise();
+
+                    console.log('/events POST response body: ' + JSON.stringify(res));
 
                     return {
                         statusCode: 201,
