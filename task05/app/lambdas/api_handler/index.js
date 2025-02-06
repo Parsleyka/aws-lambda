@@ -29,13 +29,15 @@ exports.handler = async (event) => {
                             id: uuid.v4(),
                             principalId: body.principalId,
                             createdAt: new Date().toISOString(),
-                            body: body.content
+                            event: body.content
                         }
                     }
 
                     console.log('dynamoDb params: ' + JSON.stringify(params));
 
                     await dynamoDb.put(params).promise();
+
+                    console.log('/events POST success');
 
                     return {
                         statusCode: 201,
