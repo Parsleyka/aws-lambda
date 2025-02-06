@@ -2,18 +2,13 @@ const AWS = require('aws-sdk');
 const uuid = require('uuid');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-const tableName = 'Events';
+const tableName = process.env.target_table ||'Events';
 
 exports.handler = async (event) => {
     console.log('Variables: ' + JSON.stringify(process.env));
     console.log('Event: ' + JSON.stringify(event));
 
     const requestContext = event.requestContext;
-
-    const lambdaNameGeneral = 'api_handler'
-    const lambdaName = process.env.AWS_LAMBDA_FUNCTION_NAME;
-
-    const sessionTableName = lambdaName.replace(lambdaNameGeneral, tableName);
 
     try {
         if(requestContext.resourcePath === '/events'){
@@ -24,12 +19,12 @@ exports.handler = async (event) => {
                     console.log('/events POST body: ' + JSON.stringify(body));
 
                     const params = {
-                        TableName: sessionTableName,
+                        TableName: tableName,
                         Item: {
                             id: uuid.v4(),
                             principalId: body.principalId,
                             createdAt: new Date().toISOString(),
-                            event: body.content
+                            body: body.content
                         }
                     }
 
@@ -41,7 +36,7 @@ exports.handler = async (event) => {
 
                     return {
                         statusCode: 201,
-                        body: JSON.stringify(params.Item),
+                        body: params.Item
                     };
                 default:
                     return {
